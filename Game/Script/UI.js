@@ -16,5 +16,12 @@ const UI = {
         buttonRestart: [1040, 620, 80, 80],
         board: [240, 40, 800, 640],
         cellSize: [64, 64],
+    },
+
+    menu: {
+        rect: [240, 200, 800, 320],
+        buttonResume: [],
+        buttonBack: [],
+        buttonHome: [],
     }
 }
