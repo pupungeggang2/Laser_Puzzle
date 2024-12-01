@@ -20,3 +20,22 @@ function drawPuzzleUI() {
     context.drawImage(img.button.undo, UI.puzzle.buttonUndo[0], UI.puzzle.buttonUndo[1])
     context.drawImage(img.button.interact, UI.puzzle.buttonInteract[0], UI.puzzle.buttonInteract[1])
 }
+
+function drawMenu() {
+    context.fillStyle = 'White'
+    context.fillRect(UI.menu.rect[0], UI.menu.rect[1], UI.menu.rect[2], UI.menu.rect[3])
+    context.strokeRect(UI.menu.rect[0], UI.menu.rect[1], UI.menu.rect[2], UI.menu.rect[3])
+    context.fillStyle = 'Black'
+
+    context.drawImage(img.resume, UI.menu.buttonResume[0], UI.menu.buttonResume[1])
+    context.drawImage(img.back, UI.menu.buttonBack[0], UI.menu.buttonBack[1])
+    context.drawImage(img.home, UI.menu.buttonHome[0], UI.menu.buttonHome[1])
+
+    if (cursor.menu === 0) {
+        context.drawImage(img.selectFrameSmall, UI.menu.buttonResume[0], UI.menu.buttonResume[1])
+    } else if (cursor.menu === 1) {
+        context.drawImage(img.selectFrameSmall, UI.menu.buttonBack[0], UI.menu.buttonBack[1])
+    } else if (cursor.menu === 2) {
+        context.drawImage(img.selectFrameSmall, UI.menu.buttonHome[0], UI.menu.buttonHome[1])
+    }
+}

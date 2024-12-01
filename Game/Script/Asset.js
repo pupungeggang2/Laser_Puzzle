@@ -1,7 +1,11 @@
 let img = {
     play: new Image(),
-    del: new Image(),
+    erase: new Image(),
     selectFrame: new Image(),
+    selectFrameSmall: new Image(),
+    resume: new Image(),
+    back: new Image(),
+    home: new Image(),
 
     button: {
         up: new Image(),
@@ -17,8 +21,12 @@ let img = {
 
 function imageLoad() {
     img.play.src = 'Image/Play.png'
-    img.del.src = 'Image/Delete.png'
+    img.erase.src = 'Image/Erase.png'
     img.selectFrame.src = 'Image/SelectFrame.png'
+    img.selectFrameSmall.src = 'Image/SelectFrameSmall.png'
+    img.resume.src = 'Image/Resume.png'
+    img.back.src = 'Image/Back.png'
+    img.home.src = 'Image/Home.png'
 
     img.button.up.src = 'Image/Button/ButtonUp.png'
     img.button.left.src = 'Image/Button/ButtonLeft.png'
