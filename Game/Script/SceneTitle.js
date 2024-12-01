@@ -22,6 +22,7 @@ function mouseUpTitle(x, y, button) {
                 if (pointInsideRectArray(x, y, UI.title.buttonStart)) {
                     scene = 'Puzzle'
                     state = ''
+                    puzzleInit()
                 }
             }
         }
@@ -42,6 +43,7 @@ function keyDownTitle(key) {
                     if (cursor.title === 0) {
                         scene = 'Puzzle'
                         state = ''
+                        puzzleInit()
                     }
                 }
             }

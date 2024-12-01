@@ -14,6 +14,7 @@ const UI = {
         buttonInteract: [],
         buttonUndo: [],
         buttonRestart: [],
-        board: [240, 0, 800, 720],
+        board: [240, 40, 800, 640],
+        cellSize: [64, 64],
     }
 }

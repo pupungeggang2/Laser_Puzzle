@@ -15,8 +15,5 @@ let cursor = {
     menu: -1
 }
 
-let selected = {
-    level: 0,
-}
-
+let place
 let board
