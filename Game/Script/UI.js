@@ -11,9 +11,9 @@ const UI = {
         buttonLeft: [20, 540, 80, 80],
         buttonDown: [80, 620, 80, 80],
         buttonRight: [140, 540, 80, 80],
-        buttonInteract: [],
-        buttonUndo: [],
-        buttonRestart: [],
+        buttonInteract: [980, 540, 80, 80],
+        buttonUndo: [1100, 540, 80, 80],
+        buttonRestart: [1040, 620, 80, 80],
         board: [240, 40, 800, 640],
         cellSize: [64, 64],
     }
