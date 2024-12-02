@@ -8,6 +8,7 @@ class Board {
 
     constructor(data) {
         this.floor = []
+        this.thingRender = []
         this.size = [data['Size'][0], data['Size'][1]]
         for (let i = 0; i < data['Size'][0]; i++) {
             let temp = []
@@ -58,3 +59,9 @@ class Wall extends CellElement {
     }
 }
 
+class RenderObject {
+    type = ''
+
+    constructor() {
+    }
+}
