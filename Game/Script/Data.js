@@ -7,6 +7,8 @@ const dataLevel = {
         ],
         'Thing': [
             
-        ]
+        ],
+        'Start': [1, 1],
+        'Goal' : [6, 8]
     },
 }
