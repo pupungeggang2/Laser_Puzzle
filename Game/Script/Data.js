@@ -6,7 +6,7 @@ const dataLevel = {
             [1, 0], [2, 0], [3, 0], [4, 0]
         ],
         'Thing': [
-            
+            {'Type': 'Box', 'Solid': true, 'Pushable': true, 'Position': [2, 2]}
         ],
         'Start': [1, 1],
         'Goal' : [6, 8]

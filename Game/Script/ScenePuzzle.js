@@ -19,11 +19,20 @@ function displayPuzzle() {
 function mouseUpPuzzle(x, y, button) {
     if (button === 0) {
         if (menu === false) {
-            if (pointInsideRectArray(x, y, UI.puzzle.buttonBack)) {
+            if (pointInsideRectArray(x, y, UI.puzzle.buttonMenu)) {
                 menu = true
                 cursor.menu = -1
             }
             if (state === '') {
+                if (pointInsideRectArray(x, y, UI.puzzle.buttonUp)) {
+                    board.movePlayer('Up')
+                } else if (pointInsideRectArray(x, y, UI.puzzle.buttonLeft)) {
+                    board.movePlayer('Left')
+                } else if (pointInsideRectArray(x, y, UI.puzzle.buttonDown)) {
+                    board.movePlayer('Down')
+                } else if (pointInsideRectArray(x, y, UI.puzzle.buttonRight)) {
+                    board.movePlayer('Right')
+                }
             }
         } else if (menu === true) {
             if (pointInsideRectArray(x, y, UI.menu.buttonResume)) {
@@ -46,6 +55,17 @@ function keyDownPuzzle(key) {
         if (key === 'Escape') {
             menu = true
             cursor.menu = -1
+        }
+        if (state === '') {
+            if (key === 'ArrowUp' || key === 'w') {
+                board.movePlayer('Up')
+            } else if (key === 'ArrowLeft' || key === 'a') {
+                board.movePlayer('Left')
+            } else if (key === 'ArrowDown' || key === 's') {
+                board.movePlayer('Down')
+            } else if (key === 'ArrowRight' || key === 'd') {
+                board.movePlayer('Right')
+            }
         }
     } else if (menu === true) {
         if (cursor.menu === -1) {
