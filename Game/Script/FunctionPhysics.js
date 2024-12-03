@@ -9,3 +9,22 @@ function pointInsideRectArray(x, y, rect) {
 function pointInsideCircle(x, y, cx, cy, r) {
     return (x - cx) ** 2 + (y - cy) ** 2 < r ** 2
 }
+
+class VectorOP {
+    static add(vec1, vec2) {
+        return new Vector(vec1.x + vec2.x, vec1.y + vec2.y)
+    }
+
+    static sub(vec1, vec2) {
+        return new Vector(vec1.x - vec2.x, vec1.y - vec2.y)
+    }
+
+    static norm(vec) {
+        return Math.sqrt(vec.x ** 2 + vec.y ** 2)
+    }
+
+    static normalize(vec) {
+        let norm = this.norm(vec)
+        return new Vector(vec.x / norm, vec.y / norm)
+    }
+}

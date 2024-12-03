@@ -1,5 +1,11 @@
 function loopPuzzle() {
     displayPuzzle()
+
+    if (menu === false) {
+        if (state === '') {
+            puzzleTick()
+        }
+    }
 }
 
 function displayPuzzle() {
@@ -24,14 +30,24 @@ function mouseUpPuzzle(x, y, button) {
                 cursor.menu = -1
             }
             if (state === '') {
-                if (pointInsideRectArray(x, y, UI.puzzle.buttonUp)) {
-                    board.movePlayer('Up')
-                } else if (pointInsideRectArray(x, y, UI.puzzle.buttonLeft)) {
-                    board.movePlayer('Left')
-                } else if (pointInsideRectArray(x, y, UI.puzzle.buttonDown)) {
-                    board.movePlayer('Down')
-                } else if (pointInsideRectArray(x, y, UI.puzzle.buttonRight)) {
-                    board.movePlayer('Right')
+                if (inputBlock === false) {
+                    if (pointInsideRectArray(x, y, UI.puzzle.buttonUp)) {
+                        board.movePlayer('Up')
+                        inputBlock = true
+                        inputBlockTime = 0.4
+                    } else if (pointInsideRectArray(x, y, UI.puzzle.buttonLeft)) {
+                        board.movePlayer('Left')
+                        inputBlock = true
+                        inputBlockTime = 0.4
+                    } else if (pointInsideRectArray(x, y, UI.puzzle.buttonDown)) {
+                        board.movePlayer('Down')
+                        inputBlock = true
+                        inputBlockTime = 0.4
+                    } else if (pointInsideRectArray(x, y, UI.puzzle.buttonRight)) {
+                        board.movePlayer('Right')
+                        inputBlock = true
+                        inputBlockTime = 0.4
+                    }
                 }
             }
         } else if (menu === true) {
@@ -57,14 +73,24 @@ function keyDownPuzzle(key) {
             cursor.menu = -1
         }
         if (state === '') {
-            if (key === 'ArrowUp' || key === 'w') {
-                board.movePlayer('Up')
-            } else if (key === 'ArrowLeft' || key === 'a') {
-                board.movePlayer('Left')
-            } else if (key === 'ArrowDown' || key === 's') {
-                board.movePlayer('Down')
-            } else if (key === 'ArrowRight' || key === 'd') {
-                board.movePlayer('Right')
+            if (inputBlock === false) {
+                if (key === 'ArrowUp' || key === 'w') {
+                    board.movePlayer('Up')
+                    inputBlock = true
+                    inputBlockTime = 0.25
+                } else if (key === 'ArrowLeft' || key === 'a') {
+                    board.movePlayer('Left')
+                    inputBlock = true
+                    inputBlockTime = 0.25
+                } else if (key === 'ArrowDown' || key === 's') {
+                    board.movePlayer('Down')
+                    inputBlock = true
+                    inputBlockTime = 0.25
+                } else if (key === 'ArrowRight' || key === 'd') {
+                    board.movePlayer('Right')
+                    inputBlock = true
+                    inputBlockTime = 0.25
+                }
             }
         }
     } else if (menu === true) {

@@ -17,8 +17,9 @@ function main() {
 }
 
 function loop() {
-    gameFramePrevious = Date.now()
-    gameFrameCurrent = Date.now() - 16
+    gameFramePrevious = gameFrameCurrent
+    gameFrameCurrent = Date.now()
+    delta = gameFrameCurrent - gameFramePrevious
 
     if (scene === 'Title') {
         loopTitle()

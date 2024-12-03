@@ -17,3 +17,6 @@ let cursor = {
 
 let place
 let board
+
+let inputBlock = false
+let inputBlockTime = 0

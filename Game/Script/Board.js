@@ -10,7 +10,9 @@ class Board {
     cell = []
     thingRender = []
 
+    playerMoving = false
     playerPosition = [0, 0]
+    playerDestination = [0, 0]
     playerRenderPosition = [0, 0]
 
     constructor(data) {
@@ -49,6 +51,7 @@ class Board {
 
         this.playerPosition = [data['Start'][0], data['Start'][1]]
         this.playerRenderPosition = new Vector(this.boardLeft + data['Start'][1] * UI.puzzle.cellSize[0], this.boardTop + data['Start'][0] * UI.puzzle.cellSize[1])
+        this.playerDestination = new Vector(this.boardLeft + data['Start'][1] * UI.puzzle.cellSize[0], this.boardTop + data['Start'][0] * UI.puzzle.cellSize[1])
         this.goal = [data['Goal'][0], data['Goal'][1]]
         this.goalRenderPosition = new Vector(this.boardLeft + data['Goal'][1] * UI.puzzle.cellSize[0], this.boardTop + data['Goal'][0] * UI.puzzle.cellSize[0])
     }
@@ -84,40 +87,77 @@ class Board {
     movePlayer(direction) {
         if (direction === 'Up') {
             if (this.cell[this.playerPosition[0] - 1][this.playerPosition[1]].solid === false) {
+                this.playerMoving = true 
                 this.playerPosition[0] -= 1
-                this.playerRenderPosition.y -= UI.puzzle.cellSize[1]
+                this.playerDestination.y -= UI.puzzle.cellSize[1]
             } else if (this.cell[this.playerPosition[0] - 1][this.playerPosition[1]].pushable === true) {
                 if (this.cell[this.playerPosition[0] - 2][this.playerPosition[1]].solid === false) {
                     let movedId = this.cell[this.playerPosition[0] - 1][this.playerPosition[1]].id
                     let temp = this.cell[this.playerPosition[0] - 2][this.playerPosition[1]]
                     this.cell[this.playerPosition[0] - 2][this.playerPosition[1]] = this.cell[this.playerPosition[0] - 1][this.playerPosition[1]]
                     this.cell[this.playerPosition[0] - 1][this.playerPosition[1]] = temp
+
                     for (let i = 0; i < this.thingRender.length; i++) {
                         if (movedId === this.thingRender[i].id) {
-                            this.thingRender[i].position.y -= UI.puzzle.cellSize[1]
+                            this.thingRender[i].destination.y -= UI.puzzle.cellSize[1]
+                            this.thingRender[i].moving = true
                         }
                     }
+
+                    this.playerMoving = true 
                     this.playerPosition[0] -= 1
-                    this.playerRenderPosition.y -= UI.puzzle.cellSize[1]
+                    this.playerDestination.y -= UI.puzzle.cellSize[1]
                 }
             }
         } else if (direction === 'Left') {
             if (this.cell[this.playerPosition[0]][this.playerPosition[1] - 1].solid === false) {
+                this.playerMoving = true 
                 this.playerPosition[1] -= 1
-                this.playerRenderPosition.x -= UI.puzzle.cellSize[0]
+                this.playerDestination.x -= UI.puzzle.cellSize[0]
             }
         } else if (direction === 'Down') {
             if (this.cell[this.playerPosition[0] + 1][this.playerPosition[1]].solid === false) {
+                this.playerMoving = true 
                 this.playerPosition[0] += 1
-                this.playerRenderPosition.y += UI.puzzle.cellSize[1]
+                this.playerDestination.y += UI.puzzle.cellSize[1]
             }
         } else if (direction === 'Right') {
             if (this.cell[this.playerPosition[0]][this.playerPosition[1] + 1].solid === false) {
+                this.playerMoving = true 
                 this.playerPosition[1] += 1
-                this.playerRenderPosition.x += UI.puzzle.cellSize[0]
+                this.playerDestination.x += UI.puzzle.cellSize[0]
             }
         }
         this.checkBoard()
+    }
+
+    moveThing() {
+        for (let i = 0; i < this.thingRender.length; i++) {
+            let tempThing = this.thingRender[i]
+            if (tempThing.moving === true) {
+                let normalized = VectorOP.normalize(VectorOP.sub(tempThing.destination, tempThing.position))
+                if (VectorOP.norm(VectorOP.sub(tempThing.destination, tempThing.position)) > 5) {
+                    tempThing.position.x += normalized.x * 320 * delta / 1000
+                    tempThing.position.y += normalized.y * 320 * delta / 1000
+                } else {
+                    tempThing.position.x = tempThing.destination.x
+                    tempThing.position.y = tempThing.destination.y
+                    tempThing.moving = false
+                }
+            }
+        }
+
+        if (this.playerMoving === true) {
+            let normalized = VectorOP.normalize(VectorOP.sub(this.playerDestination, this.playerRenderPosition))
+            if (VectorOP.norm(VectorOP.sub(this.playerDestination, this.playerRenderPosition)) > 5) {
+                this.playerRenderPosition.x += normalized.x * 320 * delta / 1000
+                this.playerRenderPosition.y += normalized.y * 320 * delta / 1000
+            } else {
+                this.playerRenderPosition.x = this.playerDestination.x
+                this.playerRenderPosition.y = this.playerDestination.y
+                this.playerMoving = false
+            }
+        }
     }
 
     interact() {
@@ -126,6 +166,10 @@ class Board {
 
     checkBoard() {
 
+    }
+
+    tick() {
+        this.moveThing()
     }
 }
 
@@ -168,6 +212,8 @@ class Box extends CellElement {
 class RenderObject {
     type = ''
     position = 0
+    moving = false
+    destination = 0
 
     constructor() {
     }
@@ -180,6 +226,8 @@ class RenderWall extends RenderObject {
         this.id = id
         this.type = 'Wall'
         this.position = new Vector(position.x, position.y)
+        this.destination = new Vector(position.x, position.y)
+        this.moving = false
     }
 }
 
@@ -190,6 +238,8 @@ class RenderBox extends RenderObject {
         this.id = id
         this.type = 'Box'
         this.position = new Vector(position.x, position.y)
+        this.destination = new Vector(position.x, position.y)
+        this.moving = false
         if (movable === false) {
             this.pinned = true
         }
