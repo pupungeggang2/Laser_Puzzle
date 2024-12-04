@@ -2,7 +2,7 @@ function loopPuzzle() {
     displayPuzzle()
 
     if (menu === false) {
-        if (state === '') {
+        if (state === '' || state === 'Win') {
             puzzleTick()
         }
     }

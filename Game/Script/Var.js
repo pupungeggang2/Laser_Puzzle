@@ -18,5 +18,10 @@ let cursor = {
 let place
 let board
 
+let hubBoard
+let hubRender
+let hubPlayer
+let hubGoal
+
 let inputBlock = false
 let inputBlockTime = 0

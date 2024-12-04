@@ -17,6 +17,12 @@ let img = {
         undo: new Image(),
         interact: new Image(),
     },
+
+    thing: {
+        wall: new Image(),
+        box: new Image(),
+        goal: new Image(),
+    }
 }
 
 function imageLoad() {
@@ -36,4 +42,8 @@ function imageLoad() {
     img.button.restart.src = 'Image/Button/ButtonRestart.png'
     img.button.undo.src = 'Image/Button/ButtonUndo.png'
     img.button.interact.src = 'Image/Button/ButtonInteract.png'
+
+    img.thing.wall.src = 'Image/Thing/Wall.png'
+    img.thing.box.src = 'Image/Thing/Box.png'
+    img.thing.goal.src = 'Image/Thing/Goal.png'
 }

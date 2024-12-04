@@ -15,45 +15,47 @@ class Board {
     playerDestination = [0, 0]
     playerRenderPosition = [0, 0]
 
-    constructor(data) {
-        this.floor = []
-        this.thingRender = []
+    constructor(data, hubMode = false) {
+        if (hubMode === false) {
+            this.floor = []
+            this.thingRender = []
 
-        this.size = [data['Size'][0], data['Size'][1]]
+            this.size = [data['Size'][0], data['Size'][1]]
 
-        this.boardLeft = 640 - 32 * this.size[1]
-        this.boardTop = 360 - 32 * this.size[0]
+            this.boardLeft = 640 - 32 * this.size[1]
+            this.boardTop = 360 - 32 * this.size[0]
 
-        for (let i = 0; i < data['Size'][0]; i++) {
-            let temp = []
-            for (let j = 0; j < data['Size'][1]; j++) {
-                 temp.push(new Empty())
+            for (let i = 0; i < data['Size'][0]; i++) {
+                let temp = []
+                for (let j = 0; j < data['Size'][1]; j++) {
+                    temp.push(new Empty())
+                }
+                this.cell.push(temp)
             }
-            this.cell.push(temp)
-        }
 
-        let id = 1
-        for (let i = 0; i < data['Wall'].length; i++) {
-            this.cell[data['Wall'][i][0]][data['Wall'][i][1]] = new Wall(id)
-            this.thingRender.push(new RenderWall(new Vector(this.boardLeft + data['Wall'][i][1] * UI.puzzle.cellSize[0], this.boardTop + data['Wall'][i][0] * UI.puzzle.cellSize[1]), id))
-            id += 1
-        }
-
-        for (let i = 0; i < data['Thing'].length; i++) {
-            let tempThing = data['Thing'][i]
-            if (tempThing['Type'] === 'Box') {
-                this.cell[tempThing['Position'][0]][tempThing['Position'][1]] = new Box(tempThing, id)
-                let tempThingRender = new RenderBox(new Vector(this.boardLeft + tempThing['Position'][1] * UI.puzzle.cellSize[0], this.boardTop + tempThing['Position'][0] * UI.puzzle.cellSize[1]), id, tempThing['Pushable'], id)
-                this.thingRender.push(tempThingRender)
+            let id = 1
+            for (let i = 0; i < data['Wall'].length; i++) {
+                this.cell[data['Wall'][i][0]][data['Wall'][i][1]] = new Wall(id)
+                this.thingRender.push(new RenderWall(new Vector(this.boardLeft + data['Wall'][i][1] * UI.puzzle.cellSize[0], this.boardTop + data['Wall'][i][0] * UI.puzzle.cellSize[1]), id))
+                id += 1
             }
-            id += 1
-        }
 
-        this.playerPosition = [data['Start'][0], data['Start'][1]]
-        this.playerRenderPosition = new Vector(this.boardLeft + data['Start'][1] * UI.puzzle.cellSize[0], this.boardTop + data['Start'][0] * UI.puzzle.cellSize[1])
-        this.playerDestination = new Vector(this.boardLeft + data['Start'][1] * UI.puzzle.cellSize[0], this.boardTop + data['Start'][0] * UI.puzzle.cellSize[1])
-        this.goal = [data['Goal'][0], data['Goal'][1]]
-        this.goalRenderPosition = new Vector(this.boardLeft + data['Goal'][1] * UI.puzzle.cellSize[0], this.boardTop + data['Goal'][0] * UI.puzzle.cellSize[0])
+            for (let i = 0; i < data['Thing'].length; i++) {
+                let tempThing = data['Thing'][i]
+                if (tempThing['Type'] === 'Box') {
+                    this.cell[tempThing['Position'][0]][tempThing['Position'][1]] = new Box(tempThing, id)
+                    let tempThingRender = new RenderBox(new Vector(this.boardLeft + tempThing['Position'][1] * UI.puzzle.cellSize[0], this.boardTop + tempThing['Position'][0] * UI.puzzle.cellSize[1]), id, tempThing['Pushable'])
+                    this.thingRender.push(tempThingRender)
+                }
+                id += 1
+            }
+
+            this.playerPosition = [data['Start'][0], data['Start'][1]]
+            this.playerRenderPosition = new Vector(this.boardLeft + data['Start'][1] * UI.puzzle.cellSize[0], this.boardTop + data['Start'][0] * UI.puzzle.cellSize[1])
+            this.playerDestination = new Vector(this.boardLeft + data['Start'][1] * UI.puzzle.cellSize[0], this.boardTop + data['Start'][0] * UI.puzzle.cellSize[1])
+            this.goal = [data['Goal'][0], data['Goal'][1]]
+            this.goalRenderPosition = new Vector(this.boardLeft + data['Goal'][1] * UI.puzzle.cellSize[0], this.boardTop + data['Goal'][0] * UI.puzzle.cellSize[0])
+        }
     }
 
     render() {
@@ -67,65 +69,132 @@ class Board {
             let tempThingRender = this.thingRender[i]
 
             if (tempThingRender.type === 'Wall') {
-                context.fillStyle = 'Black'
-                context.fillRect(tempThingRender.position.x, tempThingRender.position.y, 64, 64)
+                context.drawImage(img.thing.wall, tempThingRender.position.x, tempThingRender.position.y)
             }
 
             if (tempThingRender.type === 'Box') {
-                context.fillStyle = 'Brown'
-                context.fillRect(tempThingRender.position.x, tempThingRender.position.y, 64, 64)
+                context.drawImage(img.thing.box, tempThingRender.position.x, tempThingRender.position.y)
             }
         }
 
-        context.fillStyle = 'Orange'
         context.fillRect(this.playerRenderPosition.x, this.playerRenderPosition.y, 64, 64)
 
-        context.fillStyle = 'Blue'
-        context.fillRect(this.goalRenderPosition.x, this.goalRenderPosition.y, 64, 64)
+        context.drawImage(img.thing.goal, this.goalRenderPosition.x, this.goalRenderPosition.y)
     }
 
     movePlayer(direction) {
         if (direction === 'Up') {
-            if (this.cell[this.playerPosition[0] - 1][this.playerPosition[1]].solid === false) {
-                this.playerMoving = true 
-                this.playerPosition[0] -= 1
-                this.playerDestination.y -= UI.puzzle.cellSize[1]
-            } else if (this.cell[this.playerPosition[0] - 1][this.playerPosition[1]].pushable === true) {
-                if (this.cell[this.playerPosition[0] - 2][this.playerPosition[1]].solid === false) {
-                    let movedId = this.cell[this.playerPosition[0] - 1][this.playerPosition[1]].id
-                    let temp = this.cell[this.playerPosition[0] - 2][this.playerPosition[1]]
-                    this.cell[this.playerPosition[0] - 2][this.playerPosition[1]] = this.cell[this.playerPosition[0] - 1][this.playerPosition[1]]
-                    this.cell[this.playerPosition[0] - 1][this.playerPosition[1]] = temp
-
-                    for (let i = 0; i < this.thingRender.length; i++) {
-                        if (movedId === this.thingRender[i].id) {
-                            this.thingRender[i].destination.y -= UI.puzzle.cellSize[1]
-                            this.thingRender[i].moving = true
-                        }
-                    }
-
+            if (this.playerPosition[0] > 0) {
+                if (this.cell[this.playerPosition[0] - 1][this.playerPosition[1]].solid === false) {
                     this.playerMoving = true 
                     this.playerPosition[0] -= 1
                     this.playerDestination.y -= UI.puzzle.cellSize[1]
+                } else if (this.cell[this.playerPosition[0] - 1][this.playerPosition[1]].pushable === true) {
+                    if (this.playerPosition[0] > 1) {
+                        if (this.cell[this.playerPosition[0] - 2][this.playerPosition[1]].solid === false) {
+                            let movedId = this.cell[this.playerPosition[0] - 1][this.playerPosition[1]].id
+                            let temp = this.cell[this.playerPosition[0] - 2][this.playerPosition[1]]
+                            this.cell[this.playerPosition[0] - 2][this.playerPosition[1]] = this.cell[this.playerPosition[0] - 1][this.playerPosition[1]]
+                            this.cell[this.playerPosition[0] - 1][this.playerPosition[1]] = temp
+        
+                            for (let i = 0; i < this.thingRender.length; i++) {
+                                if (movedId === this.thingRender[i].id) {
+                                    this.thingRender[i].destination.y -= UI.puzzle.cellSize[1]
+                                    this.thingRender[i].moving = true
+                                }
+                            }
+        
+                            this.playerMoving = true 
+                            this.playerPosition[0] -= 1
+                            this.playerDestination.y -= UI.puzzle.cellSize[1]
+                        }
+                    }
                 }
             }
         } else if (direction === 'Left') {
-            if (this.cell[this.playerPosition[0]][this.playerPosition[1] - 1].solid === false) {
-                this.playerMoving = true 
-                this.playerPosition[1] -= 1
-                this.playerDestination.x -= UI.puzzle.cellSize[0]
+            if (this.playerPosition[1] > 0) {
+                if (this.cell[this.playerPosition[0]][this.playerPosition[1] - 1].solid === false) {
+                    this.playerMoving = true 
+                    this.playerPosition[1] -= 1
+                    this.playerDestination.x -= UI.puzzle.cellSize[1]
+                } else if (this.cell[this.playerPosition[0]][this.playerPosition[1] - 1].pushable === true) {
+                    if (this.playerPosition[1] > 1) {
+                        if (this.cell[this.playerPosition[0]][this.playerPosition[1] - 2].solid === false) {
+                            let movedId = this.cell[this.playerPosition[0]][this.playerPosition[1] - 1].id
+                            let temp = this.cell[this.playerPosition[0]][this.playerPosition[1] - 2]
+                            this.cell[this.playerPosition[0]][this.playerPosition[1] - 2] = this.cell[this.playerPosition[0]][this.playerPosition[1] - 1]
+                            this.cell[this.playerPosition[0]][this.playerPosition[1] - 1] = temp
+        
+                            for (let i = 0; i < this.thingRender.length; i++) {
+                                if (movedId === this.thingRender[i].id) {
+                                    this.thingRender[i].destination.x -= UI.puzzle.cellSize[1]
+                                    this.thingRender[i].moving = true
+                                }
+                            }
+        
+                            this.playerMoving = true 
+                            this.playerPosition[1] -= 1
+                            this.playerDestination.x -= UI.puzzle.cellSize[1]
+                        }
+                    }
+                }
             }
         } else if (direction === 'Down') {
-            if (this.cell[this.playerPosition[0] + 1][this.playerPosition[1]].solid === false) {
-                this.playerMoving = true 
-                this.playerPosition[0] += 1
-                this.playerDestination.y += UI.puzzle.cellSize[1]
+            if (this.playerPosition[0] < this.size[0] - 1) {
+                if (this.cell[this.playerPosition[0] + 1][this.playerPosition[1]].solid === false) {
+                    this.playerMoving = true 
+                    this.playerPosition[0] += 1
+                    this.playerDestination.y += UI.puzzle.cellSize[1]
+                } else if (this.cell[this.playerPosition[0] + 1][this.playerPosition[1]].pushable === true) {
+                    if (this.playerPosition[0] < this.size[0] - 2) {
+                        if (this.cell[this.playerPosition[0] + 2][this.playerPosition[1]].solid === false) {
+                            let movedId = this.cell[this.playerPosition[0] + 1][this.playerPosition[1]].id
+                            let temp = this.cell[this.playerPosition[0] + 2][this.playerPosition[1]]
+                            this.cell[this.playerPosition[0] + 2][this.playerPosition[1]] = this.cell[this.playerPosition[0] + 1][this.playerPosition[1]]
+                            this.cell[this.playerPosition[0] + 1][this.playerPosition[1]] = temp
+        
+                            for (let i = 0; i < this.thingRender.length; i++) {
+                                if (movedId === this.thingRender[i].id) {
+                                    this.thingRender[i].destination.y += UI.puzzle.cellSize[1]
+                                    this.thingRender[i].moving = true
+                                }
+                            }
+        
+                            this.playerMoving = true 
+                            this.playerPosition[0] += 1
+                            this.playerDestination.y += UI.puzzle.cellSize[1]
+                        }
+                    }
+                }
             }
         } else if (direction === 'Right') {
-            if (this.cell[this.playerPosition[0]][this.playerPosition[1] + 1].solid === false) {
-                this.playerMoving = true 
-                this.playerPosition[1] += 1
-                this.playerDestination.x += UI.puzzle.cellSize[0]
+            if (this.playerPosition[1] < this.size[1] - 1) {
+                if (this.cell[this.playerPosition[0]][this.playerPosition[1] + 1].solid === false) {
+                    this.playerMoving = true 
+                    this.playerPosition[1] += 1
+                    this.playerDestination.x += UI.puzzle.cellSize[1]
+                } else if (this.cell[this.playerPosition[0]][this.playerPosition[1] + 1].pushable === true) {
+                    if (this.playerPosition[1] < this.size[1] + 2) {
+                        if (this.cell[this.playerPosition[0]][this.playerPosition[1] + 2].solid === false) {
+                            let movedId = this.cell[this.playerPosition[0]][this.playerPosition[1] + 1].id
+                            let temp = this.cell[this.playerPosition[0]][this.playerPosition[1] + 2]
+                            this.cell[this.playerPosition[0]][this.playerPosition[1] + 2] = this.cell[this.playerPosition[0]][this.playerPosition[1] + 1]
+                            this.cell[this.playerPosition[0]][this.playerPosition[1] + 1] = temp
+                            console.log(movedId)
+        
+                            for (let i = 0; i < this.thingRender.length; i++) {
+                                if (movedId === this.thingRender[i].id) {
+                                    this.thingRender[i].destination.x += UI.puzzle.cellSize[1]
+                                    this.thingRender[i].moving = true
+                                }
+                            }
+        
+                            this.playerMoving = true 
+                            this.playerPosition[1] += 1
+                            this.playerDestination.x += UI.puzzle.cellSize[1]
+                        }
+                    }
+                }
             }
         }
         this.checkBoard()
@@ -161,11 +230,13 @@ class Board {
     }
 
     interact() {
-
+       
     }
 
     checkBoard() {
-
+        if (this.playerPosition[0] === this.goal[0] && this.playerPosition[1] === this.goal[1]) {
+            state = 'Win'
+        }
     }
 
     tick() {
@@ -214,6 +285,7 @@ class RenderObject {
     position = 0
     moving = false
     destination = 0
+    id = 0
 
     constructor() {
     }
@@ -233,14 +305,14 @@ class RenderWall extends RenderObject {
 
 class RenderBox extends RenderObject {
     pinned = false
-    constructor(position, id, movable) {
+    constructor(position, id, pushable) {
         super()
         this.id = id
         this.type = 'Box'
         this.position = new Vector(position.x, position.y)
         this.destination = new Vector(position.x, position.y)
         this.moving = false
-        if (movable === false) {
+        if (pushable === false) {
             this.pinned = true
         }
     }
